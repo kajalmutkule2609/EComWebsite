@@ -10,5 +10,6 @@ public interface UserRepository {
 	public UserModel searchUserByEmailId(String email);
 	public boolean deleteUserByEmail(String email);
 	public boolean updateUserByEmail(String email,UserModel model);
+	public boolean userLogin(String email,String password);
 	
 }

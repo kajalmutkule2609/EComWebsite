@@ -8,7 +8,7 @@ import lombok.*;
 public class ProductModel {
 	private int pid;
 	private String prodName;
-	private int price;
+	private double price;
 	private int quantity;
 	private String description;
 }

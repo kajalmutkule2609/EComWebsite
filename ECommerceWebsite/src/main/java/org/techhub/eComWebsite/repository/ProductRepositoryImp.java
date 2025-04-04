@@ -20,17 +20,16 @@ public class ProductRepositoryImp implements ProductRepository {
 
 	@Override
 	public boolean addNewProduct(ProductModel product) {
-		int result=jdbcTemplate.update("Insert into Product Values('0',?,?,?,?",new PreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setString(1, product.getProdName());
-				ps.setInt(2, product.getPrice());
-				ps.setInt(3, product.getQuantity());
-				ps.setString(4, product.getDescription());
-			}
-			
-		});
+		int result=jdbcTemplate.update("Insert into Product Values('0',?,?,?,?)",
+			    new PreparedStatementSetter() {
+	        @Override
+	        public void setValues(PreparedStatement ps) throws SQLException {
+	            ps.setString(1, product.getProdName());
+	            ps.setDouble(2, product.getPrice());
+	            ps.setInt(3, product.getQuantity());
+	            ps.setString(4, product.getDescription());
+	        }
+	    });
 		return result>0;
 	}
 
@@ -41,10 +40,10 @@ public class ProductRepositoryImp implements ProductRepository {
 			@Override
 			public ProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
 				ProductModel model=new ProductModel();
-				model.setProdName(rs.getString(1));
-				model.setPrice(rs.getInt(2));
-				model.setQuantity(rs.getInt(3));
-				model.setDescription(rs.getString(4));
+				model.setProdName(rs.getString(2));
+				model.setPrice(rs.getDouble(3));
+				model.setQuantity(rs.getInt(4));
+				model.setDescription(rs.getString(5));
 				return model;
 			}
 			
@@ -54,26 +53,88 @@ public class ProductRepositoryImp implements ProductRepository {
 
 	@Override
 	public List<ProductModel> searchProduct(String category) {
-		return null;
+		list=jdbcTemplate.query("select * from Product p \r\n"
+				+ "inner join categoryproductjoin cj on p.pid=cj.pid \r\n"
+				+ "inner join category c on cj.cid=c.cid \r\n"
+				+ "where c.type=?\r\n"
+				+ "",new Object[] {category},new RowMapper<ProductModel>() {
+
+			@Override
+			public ProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ProductModel model=new ProductModel();
+				model.setProdName(rs.getString(2));
+				model.setPrice(rs.getDouble(3));
+				model.setQuantity(rs.getInt(4));
+				model.setDescription(rs.getString(5));
+				return model;
+			}
+			
+		});
+		return list;
 	}
 
 	@Override
-	public boolean updateProduct(String category) {
-		return false;
+	public boolean updateProduct(String prodName,ProductModel prod) {
+		int	result=jdbcTemplate.update("UPDATE Product SET prodName = ?, price = ?, quantity = ?, description = ? WHERE prodName = ?"
+				,prod.getProdName(),prod.getPrice(),prod.getQuantity(),prod.getDescription(),prodName);
+		return result>0;
 	}
 
 	@Override
-	public boolean deleteProduct(String category) {
-		return false;
+	public boolean deleteProduct(String prodName) {
+		int result=jdbcTemplate.update("delete from Product Where prodName=?",new Object[] {prodName});
+		return result>0;
 	}
 
 	@Override
 	public List<ProductModel> sortProductsByPriceLowToHigh() {
-		return null;
+		list=jdbcTemplate.query("select * from Product order By price asc", new RowMapper<ProductModel>() {
+
+			@Override
+			public ProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ProductModel model=new ProductModel();
+				model.setProdName(rs.getString(2));
+				model.setPrice(rs.getDouble(3));
+				model.setQuantity(rs.getInt(4));
+				model.setDescription(rs.getString(5));
+				return model;
+			}
+		});
+		return list;
 	}
 
 	@Override
 	public List<ProductModel> sortProductsByPriceHighToLow() {
-		return null;
+		list=jdbcTemplate.query("select * from Product order By price desc", new RowMapper<ProductModel>() {
+
+			@Override
+			public ProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ProductModel model=new ProductModel();
+				model.setProdName(rs.getString(2));
+				model.setPrice(rs.getDouble(3));
+				model.setQuantity(rs.getInt(4));
+				model.setDescription(rs.getString(5));
+				return model;
+			}
+		});
+		return list;
+	}
+
+	@Override
+	public List<ProductModel> searchProductByProductName(String prodName) {
+		list=jdbcTemplate.query("select * from Product where prodName=?",new Object[] {prodName},new RowMapper<ProductModel>() {
+
+			@Override
+			public ProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ProductModel model=new ProductModel();
+				model.setProdName(rs.getString(2));
+				model.setPrice(rs.getDouble(3));
+				model.setQuantity(rs.getInt(4));
+				model.setDescription(rs.getString(5));
+				return model;
+			}
+			
+		});
+		return list;
 	}
 }

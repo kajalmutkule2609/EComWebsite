@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,7 +22,7 @@ public class UserRepositoryImp implements UserRepository{
 	private JdbcTemplate jdbcTemplate;
 	@Override
 	public boolean registerNewUser(UserModel model) {
-		int result=jdbcTemplate.update("Insert into Registration values('0',?,?,?,?,?,?)",new PreparedStatementSetter() {
+		int result=jdbcTemplate.update("Insert into Registration (fullName,email,contactNo,address,password) values(?,?,?,?,?)",new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -89,6 +90,28 @@ public class UserRepositoryImp implements UserRepository{
 		        return false;
 		    }
 		}
+	@Override
+	public boolean userLogin(String email, String password) {
+		  try {
+		    jdbcTemplate.queryForObject(
+		      "SELECT * FROM User WHERE email = ? AND password = ?",
+		      new Object[]{email, password},
+		      new RowMapper<UserModel>() {
+		        @Override
+		        public UserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+		          UserModel user = new UserModel();
+		          user.setEmail(rs.getString("email"));
+		          user.setPassword(rs.getString("password"));
+		          return user;
+		        }
+		      }
+		    );
+		    return true;
+		  } catch (EmptyResultDataAccessException e) {
+		    return false;
+		  }
+		}
+
 
 
 

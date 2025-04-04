@@ -38,4 +38,9 @@ public class UserServiceImp implements UserService{
 	public boolean updateUserByEmail(String email,UserModel model) {
 		return userRepo.updateUserByEmail(email,model);
 	}
+
+	@Override
+	public boolean userLogin(String email, String password) {
+		return userRepo.userLogin(email, password);
+	}
 }

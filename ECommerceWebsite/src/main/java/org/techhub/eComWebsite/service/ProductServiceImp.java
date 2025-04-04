@@ -28,13 +28,13 @@ public class ProductServiceImp implements ProductService {
 	}
 
 	@Override
-	public boolean updateProduct(String category) {
-		return prodRepo.updateProduct(category);
+	public boolean updateProduct(String prodName,ProductModel prod) {
+		return prodRepo.updateProduct(prodName,prod);
 	}
 
 	@Override
-	public boolean deleteProduct(String category) {
-		return prodRepo.deleteProduct(category);
+	public boolean deleteProduct(String prodName) {
+		return prodRepo.deleteProduct(prodName);
 	}
 
 	@Override
@@ -45,5 +45,10 @@ public class ProductServiceImp implements ProductService {
 	@Override
 	public List<ProductModel> sortProductsByPriceHighToLow() {
 		return prodRepo.sortProductsByPriceHighToLow();
+	}
+
+	@Override
+	public List<ProductModel> searchProductByProductName(String prodName) {
+		return prodRepo.searchProductByProductName(prodName);
 	}
 }
